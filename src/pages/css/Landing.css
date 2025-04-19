@@ -1,0 +1,54 @@
+.room-creation {
+    display: flex;
+    width: 400px;
+    height: 300px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background: black;
+    border-radius: 20px;
+}
+
+.input-item {
+    position: relative;
+    width: 100%;
+}
+
+.input-item input[name="room-code"] {
+    width: 100%;
+    padding: 0.5rem 2.5rem 0.5rem 0.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    border-radius: 8px;
+    font-size: 1rem;
+    border: none;
+}
+
+.input-item button {
+    position: absolute;
+    top: 50%;
+    right: 0rem;
+    transform: translateY(-16%);
+    height: 2rem;
+    width: 2rem;
+    border: none;
+    background: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    border: 1px solid black;
+}
+
+.input-item button:hover {
+    background: #ddd;
+}
+
+.btn {
+    display: flex;
+    gap: 5px;
+}
