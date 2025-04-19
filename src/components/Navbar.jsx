@@ -5,10 +5,11 @@ import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { app, db } from "../Firebase";
 import { getAuth, signOut } from "firebase/auth";
 import { toast } from "react-toastify";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const [userName, setUserName] = useState("");
+    const navigate = useNavigate();
     const uid = read_cookie('user') || null;
     const docRef = collection(db, 'userDetails');
     const location = useLocation();
@@ -35,6 +36,7 @@ const Navbar = () => {
                 autoClose: 3000,
             });
             setUserName("");
+            navigate('/signin');
         }).catch((error) => {
             console.log(error);
         });

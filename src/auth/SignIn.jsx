@@ -1,8 +1,9 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { bake_cookie } from 'sfcookies';
+import { app } from "../Firebase";
 
 const SignIn = async (email, password) => {
-    const auth = getAuth();
+    const auth = getAuth(app);
     await signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
         const user = userCredential.user;

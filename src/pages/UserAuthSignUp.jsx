@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { getAuth, validatePassword } from "firebase/auth";
-import "./css/UserAuth.css";
 import { app, db } from "../Firebase";
 import SignUp from "../auth/SignUp";
 import { doc, setDoc, collection, getDoc } from "firebase/firestore";
 import { read_cookie } from "sfcookies";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import "./css/UserAuth.css";
 
 const UserAuthSignUp = () => {
     const [userData, setUserData] = useState({});

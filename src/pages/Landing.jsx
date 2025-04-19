@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { bake_cookie, read_cookie } from 'sfcookies';
-import "./css/Landing.css";
 import { arrayUnion, collection, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../Firebase';
 import { toast } from 'react-toastify';
+import "./css/Landing.css";
 
 const Landing = () => {
     const [room, setRoom] = useState("");
@@ -12,7 +12,7 @@ const Landing = () => {
     const userRef = collection(db, "userDetails");
     const uid = read_cookie('user') || null;
 
-    const GenerateCode = (e) => {
+    const GenerateCode = async (e) => {
         e.preventDefault();
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let code = '';

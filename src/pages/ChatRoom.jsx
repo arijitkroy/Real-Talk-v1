@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { read_cookie } from 'sfcookies';
-import "./css/ChatRoom.css";
-import { arrayUnion, collection, doc, getDoc, getDocs, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { delete_cookie, read_cookie } from 'sfcookies';
+import { deleteDoc, doc, getDoc, onSnapshot, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { db } from '../Firebase';
 import { toast } from 'react-toastify';
+import "./css/ChatRoom.css";
 
 const ChatRoom = (props) => {
     const [msg, setMsg] = useState("");
     const [boxContent, setboxContent] = useState([]);
     const [userMap, setUserMap] = useState({});
     const [uid, setUid] = useState("");
+    const messagesEndRef = useRef(null);
     const navigate = useNavigate();
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+    useEffect(() => {
+        scrollToBottom();
+    }, [msg])
 
     useEffect(() => {
         const userCookie = read_cookie('user');
@@ -44,7 +52,7 @@ const ChatRoom = (props) => {
                 });
             }
         });
-    
+
         return () => unsub();
     }, []);
 
@@ -82,10 +90,65 @@ const ChatRoom = (props) => {
         }
     };
 
+    const HandleEnterKey = (e) => {
+        if (e.key == 'Enter') {
+            HandleSubmit(e);
+        }
+    }
+
+    const handleLeaveRoom = async () => {
+        const roomId = read_cookie('room');
+        const username = userMap[uid] || 'Someone';
+    
+        const roomRef = doc(db, 'messageRooms', roomId);
+    
+        try {
+            const docSnap = await getDoc(roomRef);
+            const oldMessages = docSnap.exists() ? docSnap.data().messages || [] : [];
+            const activeUsers = docSnap.data().users || [];
+            const newUsers = activeUsers.filter(userId => userId !== uid);
+    
+            const systemMessage = {
+                type: "system",
+                content: `${username} has left the room.`,
+            };
+    
+            if (newUsers.length == 0) {
+                await updateDoc(roomRef, {
+                    messages: [...oldMessages, systemMessage],
+                    timestamp: serverTimestamp()
+                });
+
+                setTimeout(async () => {
+                    await updateDoc(roomRef, {
+                        messages: [],
+                        users: [],
+                    });
+                    await deleteDoc(roomRef);
+                }, 500);
+            }
+            else {
+                await updateDoc(roomRef, {
+                    messages: [...oldMessages, systemMessage],
+                    users: newUsers,
+                    timestamp: serverTimestamp()
+                });
+            }
+            delete_cookie('room');
+            navigate('/');
+        } catch (err) {
+            console.error("Error leaving room:", err);
+            toast.error("Failed to leave the room.");
+        }
+    };
+
     return (
         <>
             <div className='container'>
-                <h2>Room code: {read_cookie('room')}</h2>
+                <div className='heading'>
+                    <h2>Room code: {read_cookie('room')}</h2>
+                    <button onClick={handleLeaveRoom}>Leave Room</button>
+                </div>
                 <div className='chat-box'>
                     <div className='message-box'>
                         {
@@ -98,12 +161,14 @@ const ChatRoom = (props) => {
                                 return (
                                 <div key={i} className={msgObj.uid === uid ? 'msg-sender' : 'msg-receiver'}>
                                     <strong>{msgObj.uid === uid ? 'You' : userMap[msgObj.uid] || '...'}</strong>: {msgObj.text}
+                                    <div ref={messagesEndRef}/>
                                 </div>)
+                                
                             })
                         }
                     </div>
                     <div className='input-box'>
-                        <input type='text' name='msg-user' value={msg} onChange={e => setMsg(e.target.value)}/>
+                        <input type='text' name='msg-user' value={msg} onChange={e => setMsg(e.target.value)} onKeyDown={HandleEnterKey}/>
                         <button onClick={HandleSubmit}>Send</button>
                     </div>
                 </div>

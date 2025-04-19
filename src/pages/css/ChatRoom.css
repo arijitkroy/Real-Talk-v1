@@ -2,6 +2,10 @@
     flex-direction: column;
 }
 
+.heading {
+    display: flex;
+}
+
 .chat-box {
     display: flex;
     width: min(90%, 1200px);
@@ -20,7 +24,7 @@
     height: min(70%, 900px);
     width: min(95%, 1400px);
     border: 1px solid white;
-    padding: 5px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -71,9 +75,13 @@
 .user-join {
     border-radius: 5px 5px 5px 5px;
     padding: 4px;
-    width: 60%;
+    width: fit-content;
     text-align: center;
     align-self: center;
+}
+
+.user-join::before {
+    content: '🔔';
 }
 
 .input-box {

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import "./css/UserAuth.css";
 import { Link, useNavigate } from "react-router-dom";
 import SignIn from "../auth/SignIn";
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../Firebase";
 import { read_cookie } from "sfcookies";
 import { toast } from "react-toastify";
+import "./css/UserAuth.css";
 
 const UserAuthSignIn = () => {
     const [userData, setUserData] = useState({});
