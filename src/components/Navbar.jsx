@@ -43,7 +43,7 @@ const Navbar = () => {
     return (
         <>
             <div className="nav">
-                <div className="nav-logo"><a href="/"><img src="public/logo.jpg" alt="Logo" /></a></div>
+                <div className="nav-logo"><a href="/"><img src="logo.jpg" alt="Logo" /></a></div>
                 <div className="nav-items">
                     <div className="item"><a href="/">Browse Users</a></div>
                     <div className="item"><a href="/">Browse Rooms</a></div>
