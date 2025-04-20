@@ -45,6 +45,15 @@
 .nav-items a:hover::after {
     transform: scaleX(1);
 }
+
+.nav-user-profile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-right: 1rem;
+}
   
 .nav-user-profile button {
     width: 100px;
@@ -62,56 +71,74 @@
     font-size: medium;
 }
 
-.nav-user-profile .dropdown {
-    display: none;
-    position: absolute;
-    top: calc(100% + 4px);
-    right: 0;
-    min-width: 160px;
-    background: rgb(56, 56, 56);
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    z-index: 10;
-}
-  
 .nav-user-profile .user {
     position: relative;
-    cursor: pointer;
     padding: 8px 12px;
-    border-radius: 4px;
     color: white;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
-.nav-user-profile .user:hover::after {
+
+.nav-user-profile .user::after {
     content: "▼";
-    position: absolute;
-    left: -10px;
-    top: 50%;
-    transform: translateY(-50%) scaleY(1.2);
-    font-size: 0.8em;
-    color: #ffffff;
+    font-size: 0.6rem;
+    margin-left: 4px;
     transition: transform 0.2s ease;
 }
-  
-.nav-user-profile:focus-within .dropdown {
-    display: block;
+
+.nav-user-profile .dropdown {
+    display: flex;
+    flex-direction: column; /* Stack items */
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background-color: #2e2e2e;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    min-width: 160px;
+    padding: 10px 0;
+    z-index: 9;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
-  
+
+.nav-user-profile:focus-within .dropdown,
+.nav-user-profile .dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
 .nav-user-profile .dropdown a,
 .nav-user-profile .dropdown button {
     display: block;
     width: 100%;
-    padding: 10px 16px;
     text-align: left;
-    border: none;
+    padding: 10px 20px;
     background: none;
-    color: #333;
+    border: none;
     color: white;
-    text-decoration: none;
+    font-size: 0.95rem;
     cursor: pointer;
+    transition: background 0.2s ease;
+    text-decoration: none;
 }
+
 .nav-user-profile .dropdown a:hover,
 .nav-user-profile .dropdown button:hover {
-    background-color: #f5f5f5;
-    color: black;
-}  
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-user-profile .dropdown a + button {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}

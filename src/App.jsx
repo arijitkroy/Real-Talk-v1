@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { read_cookie } from 'sfcookies';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
           <Route path='/' index element={<Landing/>}/>
           <Route path='/signup' element={<UserAuthSignUp/>}/>
           <Route path='/signin' element={<UserAuthSignIn/>}/>
-          <Route path='/chatroom' element={<ChatRoom roomCode={read_cookie('room')}/>}/>
+          <Route path='/chatroom' element={<ChatRoom/>}/>
+          <Route path='/profile' element={<Profile/>}/>
         </Routes>
       </Router>
       <ToastContainer 
