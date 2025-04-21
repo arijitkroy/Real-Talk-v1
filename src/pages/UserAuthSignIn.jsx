@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { app, db } from "../Firebase";
-import { read_cookie } from "sfcookies";
+import { read_cookie, bake_cookie } from "sfcookies";
 import { toast } from "react-toastify";
 import "./css/UserAuth.css";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -23,15 +23,6 @@ const UserAuthSignIn = () => {
     const HandleSubmit = async (e) => {
         e.preventDefault();
         if (userData && (userData.email && userData.passwd)) {
-
-            // if (user.length === 0) {
-            //     toast.warn("Please verify your email before logging in.", {
-            //         position: "top-right",
-            //         autoClose: 4000,
-            //     });
-            //     navigate('/verify-email');
-            //     return;
-            // }
             const auth = getAuth(app);
             await signInWithEmailAndPassword(auth, userData.email, userData.passwd)
             .then(async (userCredential) => {
