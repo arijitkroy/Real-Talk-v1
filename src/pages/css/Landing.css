@@ -52,3 +52,9 @@
     display: flex;
     gap: 5px;
 }
+
+@media screen and (min-width: 350px) {
+    .room-creation {
+      background-color: lightgreen;
+    }
+  }
