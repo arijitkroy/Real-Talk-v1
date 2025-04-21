@@ -50,6 +50,7 @@ const UserAuthSignIn = () => {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
+                console.log(errorMessage);
                 setError("Invalid credentials!");
             });
         }
