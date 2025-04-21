@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import SignIn from "../auth/SignIn";
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../Firebase";
+import { app, db } from "../Firebase";
 import { read_cookie } from "sfcookies";
 import { toast } from "react-toastify";
 import "./css/UserAuth.css";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const UserAuthSignIn = () => {
     const [userData, setUserData] = useState({});
     const [error, setError] = useState("");
     const navigate = useNavigate();
     const docRef = collection(db, 'userDetails');
+    const user =  read_cookie('user');
 
     const HandleChange = async (e) => {
         let name = e.target.name;
@@ -21,17 +22,44 @@ const UserAuthSignIn = () => {
 
     const HandleSubmit = async (e) => {
         e.preventDefault();
-
         if (userData && (userData.email && userData.passwd)) {
-            await SignIn(userData.email, userData.passwd);
-            await updateDoc(doc(docRef, `/${read_cookie('user')}`), {
-                "signedIn": 1
-            });
-            const docSnap = await getDoc(doc(docRef, `/${read_cookie('user')}`));
-            if (docSnap.exists()) navigate('/');
-            toast.success(`${docSnap.data().username} signed in!`, {
-                position: 'bottom-left',
-                autoClose: 3000,
+
+            // if (user.length === 0) {
+            //     toast.warn("Please verify your email before logging in.", {
+            //         position: "top-right",
+            //         autoClose: 4000,
+            //     });
+            //     navigate('/verify-email');
+            //     return;
+            // }
+            const auth = getAuth(app);
+            await signInWithEmailAndPassword(auth, userData.email, userData.passwd)
+            .then(async (userCredential) => {
+                const user = userCredential.user;
+                if (!user.emailVerified) {
+                    await signOut(auth);
+                    toast.warn("Please verify your email before logging in.", {
+                        position: "top-right",
+                        autoClose: 4000,
+                    });
+                    navigate('/verify-email');
+                    return;
+                }
+                bake_cookie('user', user.uid);
+                await updateDoc(doc(docRef, `/${read_cookie('user')}`), {
+                    "signedIn": 1
+                });
+                const docSnap = await getDoc(doc(docRef, `/${read_cookie('user')}`));
+                if (docSnap.exists()) navigate('/');
+                toast.success(`${docSnap.data().username} signed in!`, {
+                    position: 'bottom-left',
+                    autoClose: 3000,
+                });
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                setError("Invalid credentials!");
             });
         }
         else setError("One or more field(s) is/are empty!");

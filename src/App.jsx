@@ -6,8 +6,9 @@ import ChatRoom from './pages/ChatRoom';
 import Navbar from './components/Navbar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { read_cookie } from 'sfcookies';
 import Profile from './pages/Profile';
+import ProtectedRoute from './auth/ProtectedRoute';
+import VerifyEmail from './pages/VerifyEmail';
 
 function App() {
   return (
@@ -20,9 +21,20 @@ function App() {
           <Route path='/' index element={<Landing/>}/>
           <Route path='/signup' element={<UserAuthSignUp/>}/>
           <Route path='/signin' element={<UserAuthSignIn/>}/>
-          <Route path='/chatroom' element={<ChatRoom/>}/>
-          <Route path='/profile' element={<Profile/>}/>
-        </Routes>
+          <Route path='/chatroom' element={
+              <ProtectedRoute>
+                <ChatRoom/>
+              </ProtectedRoute>
+            }
+          />
+          <Route  path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path='/verify-email' element={<VerifyEmail/>}/>
+          </Routes>
       </Router>
       <ToastContainer 
         newestOnTop

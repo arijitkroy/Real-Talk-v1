@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { getAuth, validatePassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, validatePassword } from "firebase/auth";
 import { app, db } from "../Firebase";
-import SignUp from "../auth/SignUp";
-import { doc, setDoc, collection, getDoc } from "firebase/firestore";
-import { read_cookie } from "sfcookies";
+import { doc, setDoc, collection } from "firebase/firestore";
+import { bake_cookie } from "sfcookies";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./css/UserAuth.css";
@@ -12,7 +11,6 @@ const UserAuthSignUp = () => {
     const [userData, setUserData] = useState({});
     const [error, setError] = useState("");
     const navigate = useNavigate();
-    const docRef = collection(db, "userDetails");
 
     const HandleChange = (e) => {
         setError("");
@@ -23,25 +21,80 @@ const UserAuthSignUp = () => {
 
     const HandleSubmit = async (e) => {
         e.preventDefault();
-        console.log(userData);
-        if (userData && (userData.username && userData.email && userData.passwd && userData.passwd == userData.repasswd)) {
-            const status = await validatePassword(getAuth(app), userData.passwd);
-            console.log(status);
-            if (status.isValid) {
-                await SignUp(userData.email, userData.passwd);
-                await setDoc(doc(docRef, `/${read_cookie('user')}`), userData);
-                const docSnap = await getDoc(doc(docRef, `/${read_cookie('user')}`));
-                if (docSnap.exists()) navigate('/');
-                toast.success(`${docSnap.data().username} registered successfully!`, {
-                    position: 'bottom-left',
-                    autoClose: 3000,
-                });
-            }
-            else setError("The password must be 6 characters long!");
+        setError("");
+    
+        const { username, email, passwd, repasswd } = userData;
+        const auth = getAuth(app);
+        const passRules = validatePassword(auth, passwd);
+    
+        if (!username || !email || !passwd || !repasswd) {
+            setError("All fields are required!");
+            return;
         }
-        else if (userData.passwd != userData.repasswd) setError("Passwords doesn't match!");
-        else setError("One or more field(s) is/are empty!");
-    }
+    
+        if (passwd !== repasswd) {
+            setError("Passwords do not match!");
+            return;
+        }
+    
+        if (passwd.length < 6) {
+            setError("Password must be at least 6 characters long!");
+            return;
+        }
+
+        if (!(await passRules).containsLowercaseLetter) {
+            setError("Password must contain a lowercase letter!");
+            return;
+        }
+
+        if (!(await passRules).containsUppercaseLetter) {
+            setError("Password must contain an uppercase letter!");
+            return;
+        }
+
+        if (!(await passRules).containsNumericCharacter) {
+            setError("Password must contain a numeric digit!");
+            return;
+        }
+
+        if (!(await passRules).containsNonAlphanumericCharacter) {
+            setError("Password must contain a special symbol!");
+            return;
+        }
+    
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, passwd);
+            const user = userCredential.user;
+    
+            await sendEmailVerification(user);
+    
+            const userInfo = {
+                uid: user.uid,
+                username,
+                password: passwd,
+                email,
+                createdAt: new Date().toISOString(),
+            };
+    
+            await setDoc(doc(collection(db, "userDetails"), user.uid), userInfo);
+    
+            toast.success("Account created! Please verify your email before logging in.", {
+                position: 'bottom-left',
+                autoClose: 4000,
+            });
+    
+            navigate("/verify-email");
+    
+        } catch (error) {
+            console.error(error);
+            if (error.code === "auth/email-already-in-use") {
+                setError("Email already in use.");
+            } else {
+                setError("Sign up failed. Please try again.");
+            }
+        }
+    };
+    
 
     return (
         <>
