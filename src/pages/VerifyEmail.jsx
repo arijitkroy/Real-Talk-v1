@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./css/VerifyEmail.css";
 import { app } from "../Firebase";
+import { bake_cookie } from "sfcookies";
 
 const VerifyEmail = () => {
     const auth = getAuth(app);
