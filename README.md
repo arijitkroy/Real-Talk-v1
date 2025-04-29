@@ -5,4 +5,4 @@ Realtime Chatting Application utilizing Firebase
 React.js
 Firebase
 
-# Open to contribution
+### Open to contribution
