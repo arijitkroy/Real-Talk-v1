@@ -1,8 +1,3 @@
-# Real-Talk-v1
-Realtime Chatting Application utilizing Firebase
+# Real-Talk-v1 (Deprecated)
 
-# Tech Stack
-React.js
-Firebase
-
-### Open to contribution
+Updated to (Real-Talk-v2.1)[https://github.com/arijitkroy/Real_Talk_v2.1]
